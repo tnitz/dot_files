@@ -12,6 +12,7 @@
 (load custom-file)
 
 ;; Machine specific configuration parameters
+(defvar local-file)
 (setq local-file "~/.emacs.d/etc/local.el")
 (when (not (file-exists-p local-file))
   (with-temp-buffer (write-file local-file)))
@@ -55,6 +56,7 @@
   :ensure t
   :pin melpa-stable
   :bind ("C-x g" . magit-status)
+  :functions magit-define-popup-switch
   :config
   (magit-define-popup-switch 'magit-log-popup ?f "first parent" "--first-parent")
   (with-eval-after-load 'info
