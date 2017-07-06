@@ -192,6 +192,7 @@
 
 (use-package guide-key
   :defer t
+  :ensure t
   :diminish guide-key-mode
   :config
   (progn
