@@ -274,6 +274,9 @@
 ;; don't have a toolbar
 (tool-bar-mode -1)
 
+;; don't quit without prompting
+(setq confirm-kill-emacs 'yes-or-no-p)
+
 ;; set theme
 ;; (load-theme 'Oblivion)
 ;; (load-theme 'monokai)
