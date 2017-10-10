@@ -18,7 +18,6 @@
   (with-temp-buffer (write-file local-file)))
 (load local-file)
 
-
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -42,7 +41,13 @@
 ;; clang format
 (use-package clang-format
   :ensure t
-  :bind ([C-M-tab] . clang-format-region))
+  :bind ([C-M-tab] . clang-format-region)
+  :config
+  ;; Hook function
+  (defun clang-format-before-save ()
+  (interactive)
+  (when (or (eq major-mode 'c++-mode) (eq major-mode 'c-mode)) (clang-format-buffer)))
+  (add-hook 'before-save-hook 'clang-format-before-save))
 
 ;; editorconfig
 (use-package editorconfig
@@ -65,13 +70,22 @@
                  "~/.emacs.d/site-lisp/magit/Documentation/")))
 
 (use-package magithub
-;;  :disabled t
-;;  :ensure t
+  ;;  :disabled t
+  ;;  :ensure t
   :after magit
   :load-path "site-lisp/magithub/"
   :functions magithub-feature-autoinject
   :config
   (magithub-feature-autoinject t))
+
+(use-package magit-lfs
+  :ensure t
+  :after magit
+  :pin melpa)
+
+(use-package git-timemachine
+  :ensure t
+  :bind (("C-x t" . git-timemachine-toggle)))
 
 ;; helm
 (use-package helm
@@ -100,7 +114,9 @@
   :after projectile
   :after helm
   :config
-  (setq projectile-completion-system 'helm)
+  (setq projectile-completion-system 'helm
+        projectile-switch-project-action 'helm-projectile
+        projectile-enable-caching t)
   (helm-projectile-on))
 
 (use-package irony
@@ -137,6 +153,12 @@
   :commands company-indent-or-complete-common
   :config
   (add-to-list 'company-backends 'company-irony))
+
+(use-package company-quickhelp
+  :after company
+  :ensure t
+  :config
+  (company-quickhelp-mode 1))
 
 (use-package flycheck
   :diminish flycheck-mode
@@ -190,15 +212,6 @@
 (use-package abbrev
   :diminish abbrev-mode)
 
-(use-package guide-key
-  :defer t
-  :ensure t
-  :diminish guide-key-mode
-  :config
-  (progn
-    (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
-    (guide-key-mode 1)))
-
 (use-package yaml-mode
   :ensure t
   :mode "\\.e?ya?ml$")
@@ -216,37 +229,37 @@
 (use-package ample-theme
   :ensure t)
 
-;; (use-package ansi-color
-;;   :config
-;;   (setq ansi-color-names-vector ["#2e3436" "#a40000" "#4e9a06" "#c4a000" "#204a87" "#5c3566" "#ce5c00" "#eeeeec"]))
+(use-package org
+  :mode ("\\.org'" . org-mode)
+  :ensure t
+  :bind (("C-c c" . org-capture)
+         ("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c b" . org-iswitchb))
+  :config (setq org-directory "~/org"
+                org-default-notes-file (concat org-directory "/notes.org")))
 
-;; cc-mode defaults
-;; (setq-default indent-tabs-mode nil)
-;; (setq-default c-basic-offset 4)
-;; (setq-default c-indent-tabs-mode nil
-;;               c-indent-level 4
-;;               c-argdecl-indent 0
-;;               c-tab-always-indent t
-;; )
-;; (c-add-style "cruise" '((c-offsets-alist
-;;                          (arglist-intro . 6)
-;;                          (substatement-open . 0)
-;;                          (innamespace . -)
-;;                          (inline-open . 0)
-;;                          (block-open . +)
-;;                          (brace-list-open . +)   ; all "opens" should be indented by the c-indent-level
-;;                          (case-label . 0)
-;;                          )
-;;                         (c-continued-statement-offset 6)))
+(use-package srefactor
+  :ensure t
+  :bind (:map c-mode-map
+  ("M-RET" . srefactor-refactor-at-point)
+  :map c++-mode-map
+  ("M-RET" . srefactor-refactor-at-point))
+  :config
+  (semantic-mode 1))
 
 ;; ;; keymaps for c/c++
-;; (defun my-c-mode-hook ()
-;;   (c-set-style "cruise")
-;;   (define-key c-mode-base-map [(tab)] 'company-indent-or-complete-common)
-;;   (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
-;; (add-hook 'c-mode-hook 'my-c-mode-hook)
-;; (add-hook 'c++-mode-hook 'my-c-mode-hook)
+(defun my-c-mode-hook ()
+  (define-key c-mode-base-map [(tab)] 'company-indent-or-complete-common)
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+;; Show collapsed blocks when jumping into them using goto-line
+(defadvice goto-line (after expand-after-goto-line activate compile)
+  "hideshow-expand affected block when using goto-line in a collapsed buffer"
+  (save-excursion (hs-show-block)))
 
 ;; global keymaps
 (global-set-key (kbd "C-x /") 'comment-or-uncomment-region)
@@ -278,7 +291,4 @@
 (setq confirm-kill-emacs 'yes-or-no-p)
 
 ;; set theme
-;; (load-theme 'Oblivion)
-;; (load-theme 'monokai)
-;; (load-theme ')
 (load-theme 'ample)
