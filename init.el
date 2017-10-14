@@ -287,8 +287,9 @@
 ;; don't have a toolbar
 (tool-bar-mode -1)
 
-;; don't quit without prompting
-(setq confirm-kill-emacs 'yes-or-no-p)
+;; don't quit with the normal key binding.
+(global-unset-key "\C-x\C-c")
 
 ;; set theme
 (load-theme 'ample)
+
