@@ -37,6 +37,7 @@
         win-switch-idle-time 1.8
         win-switch-other-window-first nil)
   (win-switch-set-wrap-around nil))
+(windmove-default-keybindings 'meta)
 
 (defun clang-format-before-save ()
   (interactive)
@@ -59,20 +60,18 @@
 
 ;; magit
 (use-package magit
-  :ensure t
-  :pin melpa-stable
+  :load-path "site-lisp/magit/"
   :bind ("C-x g" . magit-status)
   :functions magit-define-popup-switch
   :config
-  (magit-define-popup-switch 'magit-log-popup ?f "First parent" "--first-parent")
-  (with-eval-after-load 'info
-    (info-initialize)
-    (add-to-list 'Info-directory-list
-                 "~/.emacs.d/site-lisp/magit/Documentation/")))
+  (magit-define-popup-switch 'magit-log-popup ?f "First parent" "--first-parent"))
+  ;; (with-eval-after-load 'info
+  ;;   (info-initialize)
+  ;;   (add-to-list 'Info-directory-list
+  ;;                "~/.emacs.d/site-lisp/magit/Documentation/")))
 
 (use-package magithub
-  ;;  :disabled t
-  ;;  :ensure t
+  :disabled t
   :after magit
   :load-path "site-lisp/magithub/"
   :functions magithub-feature-autoinject
@@ -121,39 +120,39 @@
   (helm-projectile-on))
 
 ;; irony
-;; (use-package irony
-;;   :diminish irony-mode
-;;   :ensure t
-;;   :defer t
-;;   :disabled t
-;;   :config
-;;   (add-hook 'c++-mode-hook 'irony-mode)
-;;   (add-hook 'c-mode-hook 'irony-mode)
-;;   (add-hook 'objc-mode-hook 'irony-mode)
-;;   (defun my-irony-mode-hook ()
-;;     (define-key irony-mode-map [remap completion-at-point]
-;;       'irony-completion-at-point-async)
-;;     (define-key irony-mode-map [remap complete-symbol]
-;;       'irony-completion-at-point-async))
-;;   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-;;   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+(use-package irony
+  :diminish irony-mode
+  :ensure t
+  :defer t
+  :disabled t
+  :config
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'objc-mode-hook 'irony-mode)
+  (defun my-irony-mode-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+    (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
+  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
 
-;; (use-package company-irony
-;;   :after company
-;;   :after irony
-;;   :ensure t
-;;   :disabled t
-;;   :commands company-indent-or-complete-common
-;;   :config
-;;   (add-to-list 'company-backends 'company-irony))
+(use-package company-irony
+  :after company
+  :after irony
+  :ensure t
+  :disabled t
+  :commands company-indent-or-complete-common
+  :config
+  (add-to-list 'company-backends 'company-irony))
 
-;; (use-package flycheck-irony
-;;   :after flycheck
-;;   :after irony
-;;   :ensure t
-;;   :disabled t
-;;   :config
-;;   (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+(use-package flycheck-irony
+  :after flycheck
+  :after irony
+  :ensure t
+  :disabled t
+  :config
+  (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 ;; company and flycheck
 (use-package company
@@ -165,7 +164,6 @@
   (setq company-backends (delete 'company-semantic company-backends))
   (add-to-list 'company-backends 'company-c-headers)
   (setq company-async-timeout 10))
-
 
 (use-package company-quickhelp
   :after company
@@ -188,41 +186,43 @@
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
 ;; ycmd
-(use-package ycmd
-  :config
-  (add-hook 'after-init-hook #'global-ycmd-mode)
-  (set-variable 'ycmd-server-command `("python" ,(file-truename "~/ycmd/ycmd/")))
-  (set-variable 'ycmd-extra-conf-whitelist '("~/cruise/*")))
+;; (use-package ycmd
+;;   :diminish ycmd
+;;   :functions gloabal-ycmd-mode
+;;   :config
+;;   (global-ycmd-mode)
+;;   (set-variable 'ycmd-server-command `("python" ,(file-truename "~/ycmd/ycmd/")))
+;;   (set-variable 'ycmd-extra-conf-whitelist '("~/cruise/*")))
 
-(use-package company-ycmd
-  :after company
-  :after ycmd
-  :config
-  (company-ycmd-setup))
+;; (use-package company-ycmd
+;;   :after company
+;;   :after ycmd
+;;   :config
+;;   (company-ycmd-setup))
 
-(use-package flycheck-ycmd
-  :after flycheck
-  :after ycmd
-  :config
-  (flycheck-ycmd-setup))
+;; (use-package flycheck-ycmd
+;;   :after flycheck
+;;   :after ycmd
+;;   :config
+;;   (flycheck-ycmd-setup))
 
 ;; rtags
-(use-package rtags
-  :ensure t
-  :config
-  (setq rtags-path "~/rtags/bin"
-        rtags-autostart-diagnostics t
-        rtags-completions-enabled t)
-  (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
-  (rtags-enable-standard-keybindings)
-  (rtags-diagnostics))
+;; (use-package rtags
+;;   :ensure t
+;;   :config
+;;   (setq rtags-path "~/rtags/bin"
+;;         rtags-autostart-diagnostics t
+;;         rtags-completions-enabled t)
+;;   (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
+;;   (rtags-enable-standard-keybindings)
+;;   (rtags-diagnostics))
 
-(use-package helm-rtags
-  :ensure t
-  :after rtags
-  :after helm
-  :config
-  (setq rtags-display-result-backend 'helm))
+;; (use-package helm-rtags
+;;   :ensure t
+;;   :after rtags
+;;   :after helm
+;;   :config
+;;   (setq rtags-display-result-backend 'helm))
 
 ;; (use-package company-rtags
 ;;   :ensure t
@@ -270,7 +270,7 @@
   (global-whitespace-mode 1)
   (add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t))))
 ;;  (setq-default show-trailing-whitespace t))
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 
 (use-package abbrev
   :diminish abbrev-mode)
@@ -302,14 +302,14 @@
   :config (setq org-directory "~/org"
                 org-default-notes-file (concat org-directory "/notes.org")))
 
-(use-package srefactor
-  :ensure t
-  :bind (:map c-mode-map
-  ("M-RET" . srefactor-refactor-at-point)
-  :map c++-mode-map
-  ("M-RET" . srefactor-refactor-at-point))
-  :config
-  (semantic-mode 1))
+;; (use-package srefactor
+;;   :ensure t
+;;   :bind (:map c-mode-map
+;;   ("M-RET" . srefactor-refactor-at-point)
+;;   :map c++-mode-map
+;;   ("M-RET" . srefactor-refactor-at-point))
+;;   :config
+;;   (semantic-mode 1))
 
 ;; ;; keymaps for c/c++
 (defun my-c-mode-hook ()

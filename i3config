@@ -108,8 +108,8 @@ set $ws9 "9"
 set $ws10 "10"
 
 # output names
-set $left_monitor  "DP-2"
-set $right_monitor "DP-4"
+set $left_monitor  "DP-0"
+set $right_monitor "DP-2"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -188,7 +188,7 @@ mode "resize" {
         bindsym Escape mode "default"
 }
 
-# start synergyl
+# start synergy
 exec --no-startup-id /opt/synergy/bin/synergy
 
 # set a background image
