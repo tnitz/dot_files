@@ -15,7 +15,8 @@ SCREENSHOT="scrot $IMAGE" # 0.46s
 
 # Get the screenshot, add the blur and lock the screen with it
 $SCREENSHOT
-mogrify -resize 25% -blur 0x2 -spread 4 -resize 400% $IMAGE
+convert $IMAGE -blur 0x2 -spread 4 $IMAGE
+#mogrify -spread 4 $IMAGE
 i3lock -i $IMAGE
 rm $IMAGE
 sleep 300; pgrep i3lock && xset dpms force off

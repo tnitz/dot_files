@@ -60,7 +60,7 @@
 
 ;; magit
 (use-package magit
-  :load-path "site-lisp/magit/"
+  ;; :load-path "site-lisp/magit/"
   :bind ("C-x g" . magit-status)
   :functions magit-define-popup-switch
   :config
@@ -101,13 +101,14 @@
          ([tab] . helm-execute-persistent-action))
   :config
   (helm-mode 1)
-  (setq helm-split-window-in-side-p t))
+  (setq helm-split-window-inside-p t))
 
 ;; projectile
 (use-package projectile
   :ensure t
   :config
-  (projectile-mode))
+  (projectile-mode)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
 (use-package helm-projectile
   :ensure t
