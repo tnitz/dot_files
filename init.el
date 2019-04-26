@@ -186,6 +186,23 @@
   :config
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
+(use-package yasnippet)
+
+(use-package lsp-mode :commands (lsp))
+
+(use-package company-lsp
+  :after (:all (company lsp-mode))
+  :config (push 'company-lsp company-backends))
+
+(use-package ccls
+  :hook (c++-mode . (lambda () (require 'ccls) (lsp)))
+  :config
+  (setq ccls-initialization-options
+    '(:cache (:directory "/home/tnitz/.ccls_cache")
+      :index (:initialBlacklist ["."] :comments 1 :threads 2))))
+
+(provide 'init-auto-completion)
+
 ;; ycmd
 ;; (use-package ycmd
 ;;   :diminish ycmd
@@ -290,6 +307,11 @@
   :config
   (powerline-default-theme))
 
+(use-package i3
+  :load-path "site-lisp/i3-emacs/")
+;  :config
+;  (i3-one-window-per-frame-mode-on))
+
 (use-package ample-theme
   :ensure t)
 
@@ -347,6 +369,8 @@
 
 ;; don't have a toolbar
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
 
 ;; don't quit with the normal key binding.
 (global-unset-key "\C-x\C-c")

@@ -95,23 +95,30 @@ bindsym $mod+Control+space focus mode_toggle
 bindsym $mod+a focus parent
 
 # focus the child container
-#bindsym $mod+d focus child
+bindsym $mod+q focus child
+
+bindsym $mod+u border none
+bindsym $mod+o border normal 2
+bindsym $mod+p border pixel 2
 
 # workspace names
 set $ws1 "1:www"
 set $ws2 "2:emacs"
-set $ws3 "3:bags"
-set $ws4 "4:rviz"
+set $ws3 "3:shell"
+set $ws4 "4:viz"
 set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws9 "9:nautilus"
+set $ws10 "10:kbd"
 
 # output names
-set $left_monitor  "DP-0"
-set $right_monitor "DP-2"
+set $left_monitor  "HDMI-0"
+set $right_monitor "DP-4"
+
+# arrange outputs
+exec xrandr --output $left_monitor --left-of $right_monitor
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -160,7 +167,7 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 # lock the screen
 #bindsym $mod+Shift+Control+l exec "i3lock -c 000000 -e -f"
 bindsym $mod+Shift+Control+l exec "~/bin/lock.sh"
-exec xautolock -time 15 -locker '~/bin/lock.sh' &
+#exec xautolock -time 15 -locker '~/bin/lock.sh' &
 
 # move the current workspace to the left or right monitor
 bindsym $mod+Shift+Control+Left move workspace to output left
@@ -178,6 +185,10 @@ mode "resize" {
         bindsym k resize shrink height 10 px or 10 ppt
         bindsym i resize grow height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
+        bindsym Shift+j resize shrink width 1 px or 1 ppt
+        bindsym Shift+k resize shrink height 1 px or 1 ppt
+        bindsym Shift+i resize grow height 1 px or 1 ppt
+        bindsym Shift+l resize grow width 1 px or 1 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
@@ -191,16 +202,14 @@ mode "resize" {
 }
 
 # start synergy
-exec --no-startup-id /opt/synergy/bin/synergy
+exec --no-startup-id /usr/bin/synergy
 
 # set a background image
 exec --no-startup-id feh --bg-tile ~/.config/i3/binding_dark.png
 
-# start the emacs server
-exec --no-startup-id emacs -daemon
-
 focus_follows_mouse no
 mouse_warping none
+#focus_wrapping no
 
 bindsym $mod+r mode "resize"
 
